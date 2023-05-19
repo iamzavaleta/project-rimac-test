@@ -1,0 +1,65 @@
+service: project-indra-rimac
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-west-2
+  iamRolesStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource:
+        - arn:aws:dynamodb:us-west-2:252450464685:table/PeopleTable
+
+functions:
+  getPeople:
+    handler: src/people/PeopleRouter.getAll
+    events:
+      - httpApi:
+          method: GET
+          path: "/people"
+
+  createPeople:
+    handler: src/people/PeopleRouter.create
+    events:
+      - httpApi:
+          method: POST
+          path: "/people"
+
+  getByIdPeople:
+    handler: src/people/PeopleRouter.getById
+    events:
+      - httpApi:
+          method: GET
+          path: "/people/{id}"
+
+  updatePeople:
+    handler: src/people/PeopleRouter.update
+    events:
+      - httpApi:
+          method: PUT
+          path: "/people/{id}"
+
+  deletePeople:
+    handler: src/people/PeopleRouter.deleteOne
+    events:
+      - httpApi:
+          method: DELETE
+          path: "/people/{id}"
+
+resources:
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: PeopleTable
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
