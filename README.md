@@ -16,8 +16,16 @@ This template demonstrates how to make a simple HTTP API with Node.js running on
 
 This template does not include any kind of persistence (database). For more advanced examples, check out the [serverless/examples repository](https://github.com/serverless/examples/) which includes Typescript, Mongo, DynamoDB and other examples.
 
-## Usage
+## How to Use
+### Change database from Resources in serverless.yml configuration
 
+✔ Steps to run project
+
+✔ Install serverless framework -> npm install -g serverless
+
+✔ Install node modules -> npm install --save-prod
+
+✔ Run project locally -> Install dev dependencies: npm install --only=dev -> Run project locally: serverless offline start
 ### Deployment
 
 ```
