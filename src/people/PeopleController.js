@@ -33,9 +33,9 @@ class PeopleController {
         try {
             const body = event.body
             // Craete people with service
-            const newCharacter = await service.create(body)
+            const newPeople = await service.create(body)
 
-            return responseCreate(Table.People, newCharacter)
+            return responseCreate(Table.People, newPeople)
         }
         catch (error) {
             return responseError()
