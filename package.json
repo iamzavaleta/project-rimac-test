@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "dev": "serverless offline start",
     "test": "npx jest"
   },
   "dependencies": {
