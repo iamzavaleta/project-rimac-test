@@ -7,18 +7,18 @@ class PeopleController {
     async getAll() {
         try {
             let people = [];
-            // Get data saved from database and star wars API on same promise
+            // Obtener data guardada del api y de la tabla en una sola respuesta
             await Promise.allSettled([
                 service.getAll(),
                 service.getStarWarsPeople()
             ]).then(responses => {
-                // Filter only correct responses
+                // Filtrar solo las respuestas correctas
                 const responses_mapped = responses.filter(m => m.status === 'fulfilled').map(m => m.value)
-                // Map people to response
+                // Mapear las respuestas
                 responses_mapped.forEach(m => {
-                    // Create an array with people values
+                    // Crea un arreglo con los valores
                     const new_people = [].concat.apply([], m)
-                    // Concat people with new people from response
+                    // Concatenar el arreglo con el nuevo valor de la respuesta.
                     people = people.concat(new_people)
                 })
             })
@@ -32,7 +32,7 @@ class PeopleController {
     async create(event) {
         try {
             const body = event.body
-            // Craete people with service
+            // Servicio para crear una persona
             const newPeople = await service.create(body)
 
             return responseCreate(Table.People, newPeople)
@@ -45,9 +45,9 @@ class PeopleController {
     async getById(event) {
         try {
             const { id } = event.pathParameters;
-            // Get by id people with service
+            // Servicio para obtener persona por Id
             const newPeople = await service.getById(id)
-            // Validate if people exists
+            // Validar si existe respuesta del servicio.
             if (!newPeople) {
                 return responseNotFound(Table.People)
             }
@@ -63,17 +63,18 @@ class PeopleController {
         try {
             const { id } = event.pathParameters;
             const body = event.body
-            // Get by id people with service
+            // Servicio para obtener la persona por id
             const peopleFound = await service.getById(id)
-            // Validate if people exists
+            
+            // Validar si la persona existe
             if (!peopleFound) {
                 return responseNotFound(Table.People)
             }
-            // Create new people values with old data and new data from payload
+            // Crear una nueva persona sobreescribiendo los valores de la nueva.
             const newPeople = Object.assign({ ...peopleFound }, { ...body })
-            // Delete some values not permited to register from payload
-            Object.keys(newCharacter).forEach(key => { if (!Object.keys(peopleFound).includes(key)) { delete newPeople[key] } })
-            // Delete when we know people exists
+
+            // Borrar los valores que no estan permitidos
+            Object.keys(newPeople).forEach(key => { if (!Object.keys(peopleFound).includes(key)) { delete newPeople[key] } })
             await service.update(id, newPeople)
 
             return responseUpdate(Table.People, newPeople)
@@ -86,13 +87,13 @@ class PeopleController {
     async deleteOne(event) {
         try {
             const { id } = event.pathParameters;
-            // Get by id people with service
+            // Servicio para obtener persona por Id
             const newPeople = await service.getById(id)
-            // Validate if people exists
+            // Validar si la persona existe en la bd
             if (!newPeople) {
                 return responseNotFound(Table.People)
             }
-            // Delete when we know people exists
+            // Servicio para borrar persona existente.
             await service.deleteOne(id)
 
             return responseDelete(Table.People)

@@ -8,7 +8,7 @@ class PeopleService {
     options = {}
 
     constructor(){
-        // Necessary for testing services
+        
         /* if(process.env.JEST_WORKER_ID){
             this.options = {
                 endpoint: 'http://localhost:8000',
@@ -20,9 +20,9 @@ class PeopleService {
 
     async getAll() {
         try {
-            // Instance a dynamodb client
+            // Instanciar dinamoClient
             const dynamodb = DynamoDBClient(this.options);
-            // Get all dynamodb documents
+            // Servicio de dynamodb para obtener todos los items de una tabla
             const result = await dynamodb.scan({
                 TableName: TableName.People
             }).promise();
@@ -36,9 +36,22 @@ class PeopleService {
 
     async getStarWarsPeople(){
         try{
-            // Get data from STAR WARS API
+            // Obtener data del api STAR WARS
             const res = await axios.get(`${externalApis.STAR_WARS}/people`)
-            return res.data.results
+
+            const dataApi = res.data.results.map( p => {
+                return{
+                    nombre: p.name,
+                    masa: p.mass,
+                    altura: p.height,
+                    color_cabello: p.hair_color,
+                    color_piel: p.skin_color,
+                    color_ojos: p.eye_color,
+                    fecha_nacimiento: p.birth_year,
+                    genero: p.gender
+                }
+            })
+            return dataApi
         }
         catch(error){
             throw error;
@@ -47,13 +60,13 @@ class PeopleService {
 
     async create(payload) {
         try {
-            // Instance a dynamodb client
+            // Instanciar un cliente de dynamodb
             const dynamodb = DynamoDBClient(this.options);
-            // Get data from payload
+            // Obtener valores del payload
             const { nombre, masa, altura, color_cabello, color_piel, color_ojos, fecha_nacimiento, genero } = payload;
-            // Create an id from uuid package
+            // Generar un id usando uuid
             const id = v4()
-            // Create people for create document after
+            // Crear un objeto con los valores del payload y id
             const newPeople = {
                 id,
                 nombre,
@@ -65,7 +78,7 @@ class PeopleService {
                 fecha_nacimiento,
                 genero
             }
-            // Create dynamodb document
+            // Servicio de dynamodb para crear un nuevo item de una tabla.
             await dynamodb.put({
                 TableName: TableName.People,
                 Item: newPeople
@@ -80,9 +93,9 @@ class PeopleService {
 
     async getById(id) {
         try {
-            // Instance a dynamodb client
+            // Instanciar un cliente de dynamodb
             const dynamodb = DynamoDBClient(this.options);
-            // Get dynamodb document from id
+            // Servicio de dynamodb para obtener un item de una tabla por Id.
             const result = await dynamodb.get({
                 TableName: TableName.People,
                 Key: {
@@ -99,11 +112,11 @@ class PeopleService {
 
     async update(id, payload) {
         try {
-            // Instance a dynamodb client
+            // Instanciar un cliente de dynamodb
             const dynamodb = DynamoDBClient(this.options);
-            // Get data from payload
+            // Obtener valores del payload
             const { nombre, altura, masa, color_cabello, color_piel, color_ojos, fecha_nacimiento, genero } = payload;
-            // Update dynamodb document
+            // Servicio de dynamodb para actualizar un item de una tabla por id.
             const res = await dynamodb.update({
                 TableName: TableName.People,
                 Key: {
@@ -130,9 +143,9 @@ class PeopleService {
 
     async deleteOne(id) {
         try {
-            // Instance a dynamodb client
+            // Instanciar un dynamodb cliente
             const dynamodb = DynamoDBClient(this.options);
-            // Delete dynamodb document
+            // Servicio de dynamodb para borrar un item por id de una tabla
             await dynamodb.delete({
                 TableName: TableName.People,
                 Key: {
