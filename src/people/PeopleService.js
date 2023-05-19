@@ -8,14 +8,13 @@ class PeopleService {
     options = {}
 
     constructor(){
-        
-        /* if(process.env.JEST_WORKER_ID){
+        if(process.env.JEST_WORKER_ID){
             this.options = {
                 endpoint: 'http://localhost:8000',
                 region: 'local-env',
                 sslEnabled: false,
             };
-        } */
+        }
     }
 
     async getAll() {
